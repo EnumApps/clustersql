@@ -173,9 +173,13 @@ func (d Driver) Open(name string) (driver.Conn, error) {
 	return n.conn, n.err
 }
 
-// NewDriver returns an initialized Cluster driver, using upstreamDriver as backend
-func NewDriver(upstreamDriver driver.Driver) Driver {
-	m := expvar.NewMap("ClusterSql")
+// NewDriver returns an initialized Cluster driver, using upstreamDriver as backend, newDriverName can be any string, default name ClusterSql will be used if it is empty ""
+func NewDriver(upstreamDriver driver.Driver, newDriverName string) Driver {
+	// added custom newDriverName, allow rename the mult drive in one app
+	if newDriverName == "" {
+		newDriverName = "ClusterSql"
+	}
+	m := expvar.NewMap(newDriverName)
 	Time := new(expvar.String)
 	Time.Set(time.Now().String())
 	m.Set("FirstInstanciated", Time)
